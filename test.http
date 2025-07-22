@@ -1,0 +1,13 @@
+### Send a GET request
+GET http://localhost:3000/songs
+
+### Send a POST request
+POST http://localhost:3000/songs
+Content-Type: application/json
+
+{
+    "title": "Bad to me.",
+    "artists": ["Wizkid", "Tems"],
+    "releaseDate": "2023-10-01",
+    "duration": "05:30"
+}
