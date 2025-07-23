@@ -4,10 +4,12 @@ import {
     Post,
     Delete, 
     Put, 
-    Body
+    Body,
+    Query,
+    Param
 } from '@nestjs/common';
 import { SongsService } from './songs.service';
-import { CreateSongsDto } from './dtos/request.dto';
+import { CreateSongsRequestDto, CreateSongsResponseDto } from  './songs.dto';
 
 @Controller('songs')
 export class SongsController {
@@ -16,21 +18,50 @@ export class SongsController {
     @Post()
     create(
         @Body() 
-        song: CreateSongsDto
-    ): string {
-        this.songsService.create(song);
-        return 'Song created successfully!';
+        song: CreateSongsRequestDto
+    ): CreateSongsResponseDto {
+       const addedSong = this.songsService.create(song);
+        return new CreateSongsResponseDto(
+            'Song created successfully',
+            [addedSong],
+            201
+        );
     }
 
     @Get()
-    findAll(): CreateSongsDto[] {
-        return this.songsService.findAll();
+    findAll(): CreateSongsResponseDto {
+        const songs = this.songsService.findAll();
+
+        if (songs.length === 0) {
+            return new CreateSongsResponseDto(
+                'No songs found', 
+                [],
+                404
+            );
+        }
+
+        return new CreateSongsResponseDto(
+            'Songs retrieved successfully',
+            songs,
+            200
+        );
     }
 
     @Get(':id')
-    findOne(index: number): string {
-        this.songsService.findOne(index);
-        return 'This action returns a single song';
+    findOne( 
+        @Param('id')
+        index: number): CreateSongsResponseDto {
+        const song = this.songsService.findOne(index);
+
+        if(!song){
+            return new CreateSongsResponseDto('Song not found!', [], 400);
+        }
+
+        return new CreateSongsResponseDto(
+            'Song retrived Successfully',
+            [song],
+            200
+        );
     }
 
     @Put(':id')
