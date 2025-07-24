@@ -6,7 +6,8 @@ import {
     Put, 
     Body,
     Query,
-    Param
+    Param,
+    NotFoundException,
 } from '@nestjs/common';
 import { SongsService } from './songs.service';
 import { CreateSongsRequestDto, CreateSongsResponseDto } from  './songs.dto';
@@ -50,16 +51,21 @@ export class SongsController {
     @Get(':id')
     findOne( 
         @Param('id')
-        index: number): CreateSongsResponseDto {
-        const song = this.songsService.findOne(index);
+        index: number) {
+        
+        let song: CreateSongsRequestDto;
 
-        if(!song){
-            return new CreateSongsResponseDto('Song not found!', [], 400);
+        try{
+            song = this.songsService.findOne(index);
+            if (!song) {
+                throw new NotFoundException('Song not found');
+            }
+        } catch (error) {
+            throw new  NotFoundException('Song not found');
         }
-
         return new CreateSongsResponseDto(
-            'Song retrived Successfully',
-            [song],
+            'Song retrieved successfully',
+            [this.songsService.findOne(index)],
             200
         );
     }

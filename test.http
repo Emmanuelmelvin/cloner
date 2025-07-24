@@ -13,4 +13,4 @@ Content-Type: application/json
 }
 
 ### Send a GET request for a specific song
-GET http://localhost:3000/songs/0
+GET http://localhost:3000/songs/7
